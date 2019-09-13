@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+
+description="Sysinfo"
+
+start() {
+	if [ -f /etc/os-release ] 
+	then
+		. /etc/os-release
+	fi
+
+cat <<EOF >&2
+***********************************************************************
+Running ${PRETTY_NAME:-Unknown Linux} at $(date)
+
+CPUs: $(grep vendor_id /proc/cpuinfo | wc -l)
+Memory: $(grep MemTotal: /proc/meminfo  | awk '{print $2 $3}')
+
+IP Addresses:
+$(ip -c -4 -o address show | cut -d'\' -f 1)
+
+Storage:
+$(df -hP)
+***********************************************************************
+EOF
+}
